@@ -39,6 +39,6 @@ class MoseiVideoDataset(Dataset):
         return elem[0], elem[1], elem[2], elem[3]
 
 
-train_dataset = MoseiVideoDataset('mosei_train.pkl')
-test_dataset = MoseiVideoDataset('mosei_test.pkl')
-labels = ['sadness', 'happiness', 'anger', 'disgust']
+train_dataset = MoseiVideoDataset("mosei_train.pkl")
+test_dataset = MoseiVideoDataset("mosei_test.pkl")
+labels = ["sadness", "happiness", "anger", "disgust"]

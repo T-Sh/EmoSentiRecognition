@@ -16,18 +16,18 @@ from torch import nn
 
 logger = logging.getLogger(__name__)
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-CONFIG_NAME = 'uncased_L-12_H-768_A-12/bert_config.json'
-WEIGHTS_NAME = 'pytorch_model.bin'
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+CONFIG_NAME = "uncased_L-12_H-768_A-12/bert_config.json"
+WEIGHTS_NAME = "pytorch_model.bin"
 
 PRETRAINED_MODEL_ARCHIVE_MAP = {
-    'bert-base-uncased': "https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-uncased.tar.gz",
-    'bert-large-uncased': "https://s3.amazonaws.com/models.huggingface.co/bert/bert-large-uncased.tar.gz",
-    'bert-base-cased': "https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-cased.tar.gz",
-    'bert-large-cased': "https://s3.amazonaws.com/models.huggingface.co/bert/bert-large-cased.tar.gz",
-    'bert-base-multilingual-uncased': "https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-multilingual-uncased.tar.gz",
-    'bert-base-multilingual-cased': "https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-multilingual-cased.tar.gz",
-    'bert-base-chinese': "https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-chinese.tar.gz",
+    "bert-base-uncased": "https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-uncased.tar.gz",
+    "bert-large-uncased": "https://s3.amazonaws.com/models.huggingface.co/bert/bert-large-uncased.tar.gz",
+    "bert-base-cased": "https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-cased.tar.gz",
+    "bert-large-cased": "https://s3.amazonaws.com/models.huggingface.co/bert/bert-large-cased.tar.gz",
+    "bert-base-multilingual-uncased": "https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-multilingual-uncased.tar.gz",
+    "bert-base-multilingual-cased": "https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-multilingual-cased.tar.gz",
+    "bert-base-chinese": "https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-chinese.tar.gz",
 }
 
 
@@ -56,21 +56,25 @@ ACT2FN = {"gelu": gelu, "relu": torch.nn.functional.relu, "swish": swish}
 
 
 class BertConfig(object):
-    def __init__(self,
-                 vocab_size_or_config_json_file,
-                 hidden_size=768,
-                 num_hidden_layers=12,
-                 num_attention_heads=12,
-                 intermediate_size=3072,
-                 hidden_act="gelu",
-                 hidden_dropout_prob=0.1,
-                 attention_probs_dropout_prob=0.1,
-                 max_position_embeddings=512,
-                 type_vocab_size=2,
-                 initializer_range=0.02):
-        if isinstance(vocab_size_or_config_json_file, str) or (sys.version_info[0] == 2
-                                                               and isinstance(vocab_size_or_config_json_file, unicode)):
-            with open(vocab_size_or_config_json_file, "r", encoding='utf-8') as reader:
+    def __init__(
+        self,
+        vocab_size_or_config_json_file,
+        hidden_size=768,
+        num_hidden_layers=12,
+        num_attention_heads=12,
+        intermediate_size=3072,
+        hidden_act="gelu",
+        hidden_dropout_prob=0.1,
+        attention_probs_dropout_prob=0.1,
+        max_position_embeddings=512,
+        type_vocab_size=2,
+        initializer_range=0.02,
+    ):
+        if isinstance(vocab_size_or_config_json_file, str) or (
+            sys.version_info[0] == 2
+            and isinstance(vocab_size_or_config_json_file, unicode)
+        ):
+            with open(vocab_size_or_config_json_file, "r", encoding="utf-8") as reader:
                 json_config = json.loads(reader.read())
             for key, value in json_config.items():
                 self.__dict__[key] = value
@@ -87,8 +91,10 @@ class BertConfig(object):
             self.type_vocab_size = type_vocab_size
             self.initializer_range = initializer_range
         else:
-            raise ValueError("First argument must be either a vocabulary size (int)"
-                             "or the path to a pretrained model config file (str)")
+            raise ValueError(
+                "First argument must be either a vocabulary size (int)"
+                "or the path to a pretrained model config file (str)"
+            )
 
     @classmethod
     def from_dict(cls, json_object):
@@ -101,7 +107,7 @@ class BertConfig(object):
     @classmethod
     def from_json_file(cls, json_file):
         """Constructs a `BertConfig` from a json file of parameters."""
-        with open(json_file, "r", encoding='utf-8') as reader:
+        with open(json_file, "r", encoding="utf-8") as reader:
             text = reader.read()
         return cls.from_dict(json.loads(text))
 
@@ -121,13 +127,13 @@ class BertConfig(object):
 try:
     from apex.normalization.fused_layer_norm import FusedLayerNorm as BertLayerNorm
 except ImportError:
-    print("Better speed can be achieved with apex installed from https://www.github.com/nvidia/apex.")
-
+    print(
+        "Better speed can be achieved with apex installed from https://www.github.com/nvidia/apex."
+    )
 
     class BertLayerNorm(nn.Module):
         def __init__(self, hidden_size, eps=1e-12):
-            """Construct a layernorm module in the TF style (epsilon inside the square root).
-            """
+            """Construct a layernorm module in the TF style (epsilon inside the square root)."""
             super(BertLayerNorm, self).__init__()
             self.weight = nn.Parameter(torch.ones(hidden_size))
             self.bias = nn.Parameter(torch.zeros(hidden_size))
@@ -141,21 +147,26 @@ except ImportError:
 
 
 class BertEmbeddings(nn.Module):
-    """Construct the embeddings from word, position and token_type embeddings.
-    """
+    """Construct the embeddings from word, position and token_type embeddings."""
 
     def __init__(self, config):
         super(BertEmbeddings, self).__init__()
         self.word_embeddings = nn.Embedding(config.vocab_size, config.hidden_size)
-        self.position_embeddings = nn.Embedding(config.max_position_embeddings, config.hidden_size)
-        self.token_type_embeddings = nn.Embedding(config.type_vocab_size, config.hidden_size)
+        self.position_embeddings = nn.Embedding(
+            config.max_position_embeddings, config.hidden_size
+        )
+        self.token_type_embeddings = nn.Embedding(
+            config.type_vocab_size, config.hidden_size
+        )
 
         self.LayerNorm = BertLayerNorm(config.hidden_size, eps=1e-12)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
 
     def forward(self, input_ids, token_type_ids=None):
         seq_length = input_ids.size(1)
-        position_ids = torch.arange(seq_length, dtype=torch.long, device=input_ids.device)
+        position_ids = torch.arange(
+            seq_length, dtype=torch.long, device=input_ids.device
+        )
         position_ids = position_ids.unsqueeze(0).expand_as(input_ids)
         if token_type_ids is None:
             token_type_ids = torch.zeros_like(input_ids)
@@ -176,7 +187,8 @@ class BertSelfAttention(nn.Module):
         if config.hidden_size % config.num_attention_heads != 0:
             raise ValueError(
                 "The hidden size (%d) is not a multiple of the number of attention "
-                "heads (%d)" % (config.hidden_size, config.num_attention_heads))
+                "heads (%d)" % (config.hidden_size, config.num_attention_heads)
+            )
         self.num_attention_heads = config.num_attention_heads
         self.attention_head_size = int(config.hidden_size / config.num_attention_heads)
         self.all_head_size = self.num_attention_heads * self.attention_head_size
@@ -188,7 +200,10 @@ class BertSelfAttention(nn.Module):
         self.dropout = nn.Dropout(config.attention_probs_dropout_prob)
 
     def transpose_for_scores(self, x):
-        new_x_shape = x.size()[:-1] + (self.num_attention_heads, self.attention_head_size)
+        new_x_shape = x.size()[:-1] + (
+            self.num_attention_heads,
+            self.attention_head_size,
+        )
         x = x.view(*new_x_shape)
         return x.permute(0, 2, 1, 3)
 
@@ -246,7 +261,9 @@ class BertIntermediate(nn.Module):
     def __init__(self, config):
         super(BertIntermediate, self).__init__()
         self.dense = nn.Linear(config.hidden_size, config.intermediate_size)
-        if isinstance(config.hidden_act, str) or (sys.version_info[0] == 2 and isinstance(config.hidden_act, unicode)):
+        if isinstance(config.hidden_act, str) or (
+            sys.version_info[0] == 2 and isinstance(config.hidden_act, unicode)
+        ):
             self.intermediate_act_fn = ACT2FN[config.hidden_act]
         else:
             self.intermediate_act_fn = config.hidden_act
@@ -289,9 +306,17 @@ class BertEncoder(nn.Module):
     def __init__(self, config):
         super(BertEncoder, self).__init__()
         layer = BertLayer(config)
-        self.layer = nn.ModuleList([copy.deepcopy(layer) for _ in range(config.num_attention_heads)])
+        self.layer = nn.ModuleList(
+            [copy.deepcopy(layer) for _ in range(config.num_attention_heads)]
+        )
 
-    def forward(self, hidden_states, all_audio_data, attention_mask, output_all_encoded_layers=True):
+    def forward(
+        self,
+        hidden_states,
+        all_audio_data,
+        attention_mask,
+        output_all_encoded_layers=True,
+    ):
         all_encoder_layers = []
         for layer_module in self.layer:
             hidden_states = layer_module(hidden_states, all_audio_data, attention_mask)
@@ -324,12 +349,12 @@ class BertPreTrainedModel(nn.Module):
                 "To create a model from a Google pretrained model use "
                 "`model = {}.from_pretrained(PRETRAINED_MODEL_NAME)`".format(
                     self.__class__.__name__, self.__class__.__name__
-                ))
+                )
+            )
         self.config = config
 
     def init_bert_weights(self, module):
-        """ Initialize the weights.
-        """
+        """Initialize the weights."""
         if isinstance(module, (nn.Linear, nn.Embedding)):
             module.weight.data.normal_(mean=0.0, std=self.config.initializer_range)
         elif isinstance(module, BertLayerNorm):
@@ -339,8 +364,15 @@ class BertPreTrainedModel(nn.Module):
             module.bias.data.zero_()
 
     @classmethod
-    def from_pretrained(cls, pretrained_model_name_or_path, state_dict=None, cache_dir=None,
-                        from_tf=False, *inputs, **kwargs):
+    def from_pretrained(
+        cls,
+        pretrained_model_name_or_path,
+        state_dict=None,
+        cache_dir=None,
+        from_tf=False,
+        *inputs,
+        **kwargs
+    ):
         if pretrained_model_name_or_path in PRETRAINED_MODEL_ARCHIVE_MAP:
             archive_file = PRETRAINED_MODEL_ARCHIVE_MAP[pretrained_model_name_or_path]
         else:
@@ -353,22 +385,30 @@ class BertPreTrainedModel(nn.Module):
                 "We assumed '{}' was a path or url but couldn't find any file "
                 "associated to this path or url.".format(
                     pretrained_model_name_or_path,
-                    ', '.join(PRETRAINED_MODEL_ARCHIVE_MAP.keys()),
-                    archive_file))
+                    ", ".join(PRETRAINED_MODEL_ARCHIVE_MAP.keys()),
+                    archive_file,
+                )
+            )
             return None
         if resolved_archive_file == archive_file:
             logger.info("loading archive file {}".format(archive_file))
         else:
-            logger.info("loading archive file {} from cache at {}".format(
-                archive_file, resolved_archive_file))
+            logger.info(
+                "loading archive file {} from cache at {}".format(
+                    archive_file, resolved_archive_file
+                )
+            )
         tempdir = None
         if os.path.isdir(resolved_archive_file) or from_tf:
             serialization_dir = resolved_archive_file
         else:
             tempdir = tempfile.mkdtemp()
-            logger.info("extracting archive file {} to temp dir {}".format(
-                resolved_archive_file, tempdir))
-            with tarfile.open(resolved_archive_file, 'r:gz') as archive:
+            logger.info(
+                "extracting archive file {} to temp dir {}".format(
+                    resolved_archive_file, tempdir
+                )
+            )
+            with tarfile.open(resolved_archive_file, "r:gz") as archive:
                 archive.extractall(tempdir)
             serialization_dir = tempdir
 
@@ -386,10 +426,10 @@ class BertPreTrainedModel(nn.Module):
         new_keys = []
         for key in state_dict.keys():
             new_key = None
-            if 'gamma' in key:
-                new_key = key.replace('gamma', 'weight')
-            if 'beta' in key:
-                new_key = key.replace('beta', 'bias')
+            if "gamma" in key:
+                new_key = key.replace("gamma", "weight")
+            if "beta" in key:
+                new_key = key.replace("beta", "bias")
             if new_key:
                 old_keys.append(key)
                 new_keys.append(new_key)
@@ -400,32 +440,50 @@ class BertPreTrainedModel(nn.Module):
         unexpected_keys = []
         error_msgs = []
 
-        metadata = getattr(state_dict, '_metadata', None)
+        metadata = getattr(state_dict, "_metadata", None)
         state_dict = state_dict.copy()
         if metadata is not None:
             state_dict._metadata = metadata
 
-        def load(module, prefix=''):
+        def load(module, prefix=""):
             local_metadata = {} if metadata is None else metadata.get(prefix[:-1], {})
             module._load_from_state_dict(
-                state_dict, prefix, local_metadata, True, missing_keys, unexpected_keys, error_msgs)
+                state_dict,
+                prefix,
+                local_metadata,
+                True,
+                missing_keys,
+                unexpected_keys,
+                error_msgs,
+            )
             for name, child in module._modules.items():
                 if child is not None:
-                    load(child, prefix + name + '.')
+                    load(child, prefix + name + ".")
 
-        start_prefix = ''
-        if not hasattr(model, 'bert') and any(s.startswith('bert.') for s in state_dict.keys()):
-            start_prefix = 'bert.'
+        start_prefix = ""
+        if not hasattr(model, "bert") and any(
+            s.startswith("bert.") for s in state_dict.keys()
+        ):
+            start_prefix = "bert."
         load(model, prefix=start_prefix)
         if len(missing_keys) > 0:
-            logger.info("Weights of {} not initialized from pretrained model: {}".format(
-                model.__class__.__name__, missing_keys))
+            logger.info(
+                "Weights of {} not initialized from pretrained model: {}".format(
+                    model.__class__.__name__, missing_keys
+                )
+            )
         if len(unexpected_keys) > 0:
-            logger.info("Weights from pretrained model not used in {}: {}".format(
-                model.__class__.__name__, unexpected_keys))
+            logger.info(
+                "Weights from pretrained model not used in {}: {}".format(
+                    model.__class__.__name__, unexpected_keys
+                )
+            )
         if len(error_msgs) > 0:
-            raise RuntimeError('Error(s) in loading state_dict for {}:\n\t{}'.format(
-                model.__class__.__name__, "\n\t".join(error_msgs)))
+            raise RuntimeError(
+                "Error(s) in loading state_dict for {}:\n\t{}".format(
+                    model.__class__.__name__, "\n\t".join(error_msgs)
+                )
+            )
         return model
 
 
@@ -437,8 +495,14 @@ class BertModel(BertPreTrainedModel):
         self.pooler = BertPooler(config)
         self.apply(self.init_bert_weights)
 
-    def forward(self, input_ids, all_audio_data, token_type_ids=None, attention_mask=None,
-                output_all_encoded_layers=True):
+    def forward(
+        self,
+        input_ids,
+        all_audio_data,
+        token_type_ids=None,
+        attention_mask=None,
+        output_all_encoded_layers=True,
+    ):
         if attention_mask is None:
             attention_mask = torch.ones_like(input_ids)
         if token_type_ids is None:
@@ -446,13 +510,17 @@ class BertModel(BertPreTrainedModel):
 
         extended_attention_mask = attention_mask.unsqueeze(1).unsqueeze(2)
 
-        extended_attention_mask = extended_attention_mask.to(dtype=next(self.parameters()).dtype)
+        extended_attention_mask = extended_attention_mask.to(
+            dtype=next(self.parameters()).dtype
+        )
         extended_attention_mask = (1.0 - extended_attention_mask) * -10000.0
         embedding_output = self.embeddings(input_ids, token_type_ids)
-        encoded_layers = self.encoder(embedding_output,
-                                      all_audio_data,
-                                      extended_attention_mask,
-                                      output_all_encoded_layers=output_all_encoded_layers)
+        encoded_layers = self.encoder(
+            embedding_output,
+            all_audio_data,
+            extended_attention_mask,
+            output_all_encoded_layers=output_all_encoded_layers,
+        )
         sequence_output = encoded_layers[-1]
         pooled_output = self.pooler(sequence_output)
         if not output_all_encoded_layers:
@@ -470,12 +538,26 @@ class BertForSequenceClassification(BertPreTrainedModel):
         self.classifier = nn.Linear(config.hidden_size, 1)
         self.apply(self.init_bert_weights)
 
-    def forward(self, input_ids, all_audio_data, video_data, token_type_ids=None, attention_mask=None, labels=None):
-        encoder_lastoutput, pooled_output, extend_mask = self.bert(input_ids, all_audio_data, token_type_ids,
-                                                                   attention_mask, output_all_encoded_layers=True)
+    def forward(
+        self,
+        input_ids,
+        all_audio_data,
+        video_data,
+        token_type_ids=None,
+        attention_mask=None,
+        labels=None,
+    ):
+        encoder_lastoutput, pooled_output, extend_mask = self.bert(
+            input_ids,
+            all_audio_data,
+            token_type_ids,
+            attention_mask,
+            output_all_encoded_layers=True,
+        )
         pooled_output = self.dropout(pooled_output)
-        pooled_output, text_att, fusion_att = self.BertFinetun(encoder_lastoutput, pooled_output, all_audio_data,
-                                                               video_data, extend_mask)
+        pooled_output, text_att, fusion_att = self.BertFinetun(
+            encoder_lastoutput, pooled_output, all_audio_data, video_data, extend_mask
+        )
         pooled_output = self.dropout(pooled_output)
         logits = self.classifier(pooled_output)
         if labels is not None:

@@ -17,7 +17,9 @@ class MeldVideoDataset(Dataset):
 
         for item in data:
             video_features = item[0]
-            video_features = [cv2.resize(img, dsize=(64, 64)) for img in video_features if img != []]
+            video_features = [
+                cv2.resize(img, dsize=(64, 64)) for img in video_features if img != []
+            ]
             audio_features = item[1]
             text_features = item[2]
             emotion = item[3]
@@ -38,7 +40,7 @@ class MeldVideoDataset(Dataset):
         return elem[0], elem[1], elem[2], elem[3]
 
 
-train_dataset = MeldVideoDataset('meld_train.pkl')
-test_dataset = MeldVideoDataset('meld_test.pkl')
+train_dataset = MeldVideoDataset("meld_train.pkl")
+test_dataset = MeldVideoDataset("meld_test.pkl")
 
-labels = ['neu', 'fear', 'surp', 'joy', 'disg', 'sad', 'ang']
+labels = ["neu", "fear", "surp", "joy", "disg", "sad", "ang"]

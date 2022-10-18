@@ -15,17 +15,30 @@ class BertFinetun(nn.Module):
         k1 = (4, 4, 4)  # 3d kernel size
         s1 = (2, 2, 1)  # 3d strides
         pd1 = (1, 1, 2)  # 3d padding
-        self.proj_v_1 = nn.Conv3d(in_channels=5, out_channels=ch1,
-                                  kernel_size=k1, stride=s1,
-                                  padding=pd1, bias=False)
+        self.proj_v_1 = nn.Conv3d(
+            in_channels=5,
+            out_channels=ch1,
+            kernel_size=k1,
+            stride=s1,
+            padding=pd1,
+            bias=False,
+        )
         self.bn1 = nn.BatchNorm3d(ch1)
         self.drop_video = nn.Dropout3d(0.1)
-        self.lstm = nn.LSTM(input_size=6656, hidden_size=30, num_layers=2, batch_first=True)
+        self.lstm = nn.LSTM(
+            input_size=6656, hidden_size=30, num_layers=2, batch_first=True
+        )
 
         self.activation = nn.ReLU()
-        self.audio_weight_1 = torch.nn.Parameter(torch.FloatTensor(1), requires_grad=True)
-        self.text_weight_1 = torch.nn.Parameter(torch.FloatTensor(1), requires_grad=True)
-        self.video_weight_1 = torch.nn.Parameter(torch.FloatTensor(1), requires_grad=True)
+        self.audio_weight_1 = torch.nn.Parameter(
+            torch.FloatTensor(1), requires_grad=True
+        )
+        self.text_weight_1 = torch.nn.Parameter(
+            torch.FloatTensor(1), requires_grad=True
+        )
+        self.video_weight_1 = torch.nn.Parameter(
+            torch.FloatTensor(1), requires_grad=True
+        )
         self.bias = torch.nn.Parameter(torch.FloatTensor(1), requires_grad=True)
         self.audio_weight_1.data.fill_(1)
         self.text_weight_1.data.fill_(1)
@@ -36,7 +49,9 @@ class BertFinetun(nn.Module):
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
         self.LayerNorm1 = BertLayerNorm(768)
 
-    def forward(self, hidden_states, pooled_output, audio_data, video_data, attention_mask):
+    def forward(
+        self, hidden_states, pooled_output, audio_data, video_data, attention_mask
+    ):
         attention_mask = attention_mask.squeeze(1)
         attention_mask_ = attention_mask.permute(0, 2, 1)
         text_data = hidden_states

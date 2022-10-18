@@ -25,6 +25,6 @@ class MosiVideoDataset(Dataset):
         return elem[0], elem[1], elem[2], elem[3]
 
 
-train_dataset = MosiVideoDataset('mosi_train.pkl')
-test_dataset = MosiVideoDataset('mosi_test.pkl')
-labels = ['-3', '-2', '-1', '0', '1', '2', '3']
+train_dataset = MosiVideoDataset("mosi_train.pkl")
+test_dataset = MosiVideoDataset("mosi_test.pkl")
+labels = ["-3", "-2", "-1", "0", "1", "2", "3"]

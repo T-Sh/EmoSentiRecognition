@@ -28,4 +28,11 @@ def train(model, dataloader, optimizer, device):
 
         torch.cuda.empty_cache()
 
-    return epoch_loss / len(dataloader), epoch_acc, epoch_prec, epoch_f1, epoch_rec, report
+    return (
+        epoch_loss / len(dataloader),
+        epoch_acc,
+        epoch_prec,
+        epoch_f1,
+        epoch_rec,
+        report,
+    )

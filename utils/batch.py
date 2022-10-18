@@ -11,11 +11,11 @@ overlap = 5
 BATCH_SIZE = 24
 TEXT_MAX_LENGTH = 50
 
-tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
 
 
 def rgb2gray(rgb):
-    return np.dot(rgb[...,:3], [0.2989, 0.5870, 0.1140])
+    return np.dot(rgb[..., :3], [0.2989, 0.5870, 0.1140])
 
 
 def collate_batch(batch):
@@ -60,8 +60,13 @@ def collate_batch(batch):
             print(len(float_f), float_f[0].shape, float_f[1].shape)
             raise Exception
 
-        pt = tokenizer(_text_features, padding="max_length", add_special_tokens=True, max_length=TEXT_MAX_LENGTH,
-                       return_tensors="pt")
+        pt = tokenizer(
+            _text_features,
+            padding="max_length",
+            add_special_tokens=True,
+            max_length=TEXT_MAX_LENGTH,
+            return_tensors="pt",
+        )
 
         text_list.append(pt["input_ids"][0][:TEXT_MAX_LENGTH])
         att_masks.append(pt["attention_mask"][0][:TEXT_MAX_LENGTH])
@@ -79,9 +84,11 @@ def collate_batch(batch):
 
 
 def make_loaders(train_dataset, valid_dataset):
-    train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE,
-                                  shuffle=True, collate_fn=collate_batch)
-    valid_dataloader = DataLoader(valid_dataset, batch_size=BATCH_SIZE,
-                                  shuffle=True, collate_fn=collate_batch)
+    train_dataloader = DataLoader(
+        train_dataset, batch_size=BATCH_SIZE, shuffle=True, collate_fn=collate_batch
+    )
+    valid_dataloader = DataLoader(
+        valid_dataset, batch_size=BATCH_SIZE, shuffle=True, collate_fn=collate_batch
+    )
 
     return train_dataloader, valid_dataloader
