@@ -41,3 +41,4 @@ class MoseiVideoDataset(Dataset):
 
 train_dataset = MoseiVideoDataset('mosei_train.pkl')
 test_dataset = MoseiVideoDataset('mosei_test.pkl')
+labels = ['sadness', 'happiness', 'anger', 'disgust']

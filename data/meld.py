@@ -40,3 +40,5 @@ class MeldVideoDataset(Dataset):
 
 train_dataset = MeldVideoDataset('meld_train.pkl')
 test_dataset = MeldVideoDataset('meld_test.pkl')
+
+labels = ['neu', 'fear', 'surp', 'joy', 'disg', 'sad', 'ang']
