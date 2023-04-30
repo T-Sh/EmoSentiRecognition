@@ -2,18 +2,18 @@ import pandas as pd
 from torch.utils.data import Dataset
 import cv2
 
-ltoi = {}
-emo_num = 0
+
+MELD_LABELS = ["neu", "fear", "surp", "joy", "disg", "sad", "ang"]
 
 
-class MeldVideoDataset(Dataset):
+class MeldDataset(Dataset):
     def __init__(self, annotations_file):
         self.data = []
 
         data = pd.read_pickle(annotations_file)
 
-        global ltoi
-        global emo_num
+        ltoi = {}
+        emo_num = 0
 
         for item in data:
             video_features = item[0]
@@ -38,9 +38,3 @@ class MeldVideoDataset(Dataset):
         elem = self.data[idx]
         #      text,    audio,   video,    emotion
         return elem[0], elem[1], elem[2], elem[3]
-
-
-train_dataset = MeldVideoDataset("meld_train.pkl")
-test_dataset = MeldVideoDataset("meld_test.pkl")
-
-labels = ["neu", "fear", "surp", "joy", "disg", "sad", "ang"]

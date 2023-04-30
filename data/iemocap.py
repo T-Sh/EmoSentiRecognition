@@ -2,10 +2,11 @@ import pandas as pd
 from torch.utils.data import Dataset
 import cv2
 
-MOSEI_LABELS = ["sadness", "happiness", "anger", "disgust"]
+
+IEMOCAP_LABELS = ['ang', 'neu', 'exc', 'fru', 'sad', 'hap', 'sur','fea']
 
 
-class MoseiDataset(Dataset):
+class IemocapDataset(Dataset):
     def __init__(self, annotations_file):
         self.data = []
 
@@ -16,25 +17,22 @@ class MoseiDataset(Dataset):
 
         for item in data:
             video_features = item[0]
-            video_features = [
-                cv2.resize(img, dsize=(64, 64)) for img in video_features if img != []
-            ]
+            video_features = [cv2.resize(img, dsize=(64, 64)) for img in video_features if img != []]
             audio_features = item[1]
             text_features = item[2]
             emotion = item[3]
             if emotion not in ltoi:
                 ltoi[emotion] = emo_num
+                emo_num += 1
 
             emotion = ltoi[emotion]
 
             self.data.append((text_features, audio_features, video_features, emotion))
-
-        del data
 
     def __len__(self):
         return len(self.data)
 
     def __getitem__(self, idx):
         elem = self.data[idx]
-        #      text,    audio,   video,    sentiment
+        #      text,    audio,   video,    emotion
         return elem[0], elem[1], elem[2], elem[3]

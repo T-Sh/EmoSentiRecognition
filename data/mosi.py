@@ -1,8 +1,11 @@
 import pandas as pd
 from torch.utils.data import Dataset
+import cv2
+
+MOSI_LABELS = ["-3", "-2", "-1", "0", "1", "2", "3"]
 
 
-class MosiVideoDataset(Dataset):
+class MosiDataset(Dataset):
     def __init__(self, annotations_file):
         self.data = []
 
@@ -12,6 +15,9 @@ class MosiVideoDataset(Dataset):
             text_features = item[0]
             audio_features = item[1]
             video_features = item[2]
+            video_features = [
+                cv2.resize(img, dsize=(64, 64)) for img in video_features if img != []
+            ]
             sentiment = item[3]
 
             self.data.append((text_features, audio_features, video_features, sentiment))
@@ -23,8 +29,3 @@ class MosiVideoDataset(Dataset):
         elem = self.data[idx]
         #      text,    audio,   video,    sentiment
         return elem[0], elem[1], elem[2], elem[3]
-
-
-train_dataset = MosiVideoDataset("mosi_train.pkl")
-test_dataset = MosiVideoDataset("mosi_test.pkl")
-labels = ["-3", "-2", "-1", "0", "1", "2", "3"]

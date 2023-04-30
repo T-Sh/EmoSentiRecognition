@@ -3,3 +3,5 @@ utils
 urllib3
 transformers
 torch
+pandas
+cv2
