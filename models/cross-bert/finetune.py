@@ -2,7 +2,7 @@ import torch
 import numpy as np
 from torch import nn
 
-from model.model import BertLayerNorm
+from models.bert import BertLayerNorm
 
 
 class BertFinetun(nn.Module):

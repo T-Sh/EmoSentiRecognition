@@ -25,9 +25,6 @@ PRETRAINED_MODEL_ARCHIVE_MAP = {
     "bert-large-uncased": "https://s3.amazonaws.com/models.huggingface.co/bert/bert-large-uncased.tar.gz",
     "bert-base-cased": "https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-cased.tar.gz",
     "bert-large-cased": "https://s3.amazonaws.com/models.huggingface.co/bert/bert-large-cased.tar.gz",
-    "bert-base-multilingual-uncased": "https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-multilingual-uncased.tar.gz",
-    "bert-base-multilingual-cased": "https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-multilingual-cased.tar.gz",
-    "bert-base-chinese": "https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-chinese.tar.gz",
 }
 
 
@@ -93,7 +90,7 @@ class BertConfig(object):
         else:
             raise ValueError(
                 "First argument must be either a vocabulary size (int)"
-                "or the path to a pretrained model config file (str)"
+                "or the path to a pretrained models config file (str)"
             )
 
     @classmethod
@@ -346,8 +343,8 @@ class BertPreTrainedModel(nn.Module):
         if not isinstance(config, BertConfig):
             raise ValueError(
                 "Parameter config in `{}(config)` should be an instance of class `BertConfig`. "
-                "To create a model from a Google pretrained model use "
-                "`model = {}.from_pretrained(PRETRAINED_MODEL_NAME)`".format(
+                "To create a models from a Google pretrained models use "
+                "`models = {}.from_pretrained(PRETRAINED_MODEL_NAME)`".format(
                     self.__class__.__name__, self.__class__.__name__
                 )
             )
@@ -381,7 +378,7 @@ class BertPreTrainedModel(nn.Module):
             resolved_archive_file = cached_path(archive_file, cache_dir=cache_dir)
         except EnvironmentError:
             logger.error(
-                "Model name '{}' was not found in model name list ({}). "
+                "Model name '{}' was not found in models name list ({}). "
                 "We assumed '{}' was a path or url but couldn't find any file "
                 "associated to this path or url.".format(
                     pretrained_model_name_or_path,
@@ -468,13 +465,13 @@ class BertPreTrainedModel(nn.Module):
         load(model, prefix=start_prefix)
         if len(missing_keys) > 0:
             logger.info(
-                "Weights of {} not initialized from pretrained model: {}".format(
+                "Weights of {} not initialized from pretrained models: {}".format(
                     model.__class__.__name__, missing_keys
                 )
             )
         if len(unexpected_keys) > 0:
             logger.info(
-                "Weights from pretrained model not used in {}: {}".format(
+                "Weights from pretrained models not used in {}: {}".format(
                     model.__class__.__name__, unexpected_keys
                 )
             )
