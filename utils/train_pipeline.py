@@ -1,30 +1,25 @@
 import json
 
 from torch import optim
-from torch import nn
 import matplotlib.pyplot as plt
 import seaborn as sns
 from tqdm import tqdm
 
-from utils.evaluate import evaluate
-from utils.train import train
+from evaluate import evaluate
+from train import train
 
 
-def pipeline(model, train_dataloader, valid_dataloader, labels):
-    N_EPOCHS = 100
-
-    optimizer = optim.Adam(model.parameters(), lr=2e-6, eps=1e-8)
-    criterion = nn.BCELoss()
+def pipeline(model, train_dataloader, valid_dataloader, labels, criterion, lr=2e-6, eps=1e-8, epochs=100):
+    optimizer = optim.AdamW(model.parameters(), lr=lr, eps=eps)
 
     best_valid_acc = 0.0
-    best_valid_acc_7 = 0.0
     best_valid_prec = 0.0
     best_valid_f1 = 0.0
     best_valid_rec = 0.0
     result_report = {}
     result_matrix = {}
 
-    for epoch in tqdm(range(N_EPOCHS)):
+    for epoch in tqdm(range(epochs)):
         train_loss, train_acc, train_prec, train_f1, train_rec, _ = train(
             model, train_dataloader, optimizer, criterion
         )
@@ -44,13 +39,11 @@ def pipeline(model, train_dataloader, valid_dataloader, labels):
             result_matrix = matrix
 
         best_valid_acc = max(best_valid_acc, valid_acc)
-        best_valid_acc_7 = max(best_valid_acc_7, valid_acc_7)
         best_valid_prec = max(best_valid_prec, valid_prec)
         best_valid_rec = max(best_valid_rec, valid_rec)
         best_valid_f1 = max(best_valid_f1, valid_f1)
 
     print(f"Best valid acc = {best_valid_acc}")
-    print(f"Best valid acc 7 = {best_valid_acc_7}")
     print(f"Best valid prec = {best_valid_prec}")
     print(f"Best valid f1 = {best_valid_f1}")
     print(f"Best valid rec = {best_valid_rec}")
