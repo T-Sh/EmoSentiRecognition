@@ -1,11 +1,11 @@
 import pandas as pd
 from torch.utils.data import Dataset
-import cv2
-
-MOSI_LABELS = ["-3", "-2", "-1", "0", "1", "2", "3"]
+from cv2 import resize
 
 
 class MosiDataset(Dataset):
+    labels = ["-3", "-2", "-1", "0", "1", "2", "3"]
+
     def __init__(self, annotations_file):
         self.data = []
 
@@ -16,7 +16,7 @@ class MosiDataset(Dataset):
             audio_features = item[1]
             video_features = item[2]
             video_features = [
-                cv2.resize(img, dsize=(64, 64)) for img in video_features if img != []
+                resize(img, dsize=(64, 64)) for img in video_features if img != []
             ]
             sentiment = item[3]
 

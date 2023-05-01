@@ -1,30 +1,33 @@
 import pandas as pd
 from torch.utils.data import Dataset
-import cv2
-
-
-IEMOCAP_LABELS = ['ang', 'neu', 'exc', 'fru', 'sad', 'hap', 'sur','fea']
+from cv2 import resize
 
 
 class IemocapDataset(Dataset):
+    labels = ['ang', 'neu', 'exc', 'fru', 'sad', 'hap']
+
     def __init__(self, annotations_file):
         self.data = []
 
         data = pd.read_pickle(annotations_file)
 
-        ltoi = {}
-        emo_num = 0
+        ltoi = {
+            'ang': 0,
+            'neu': 1,
+            'exc': 2,
+            'fru': 3,
+            'sad': 4,
+            'hap': 5,
+        }
 
         for item in data:
             video_features = item[0]
-            video_features = [cv2.resize(img, dsize=(64, 64)) for img in video_features if img != []]
+            video_features = [
+                resize(img, dsize=(64, 64)) for img in video_features if img != []
+            ]
             audio_features = item[1]
             text_features = item[2]
             emotion = item[3]
-            if emotion not in ltoi:
-                ltoi[emotion] = emo_num
-                emo_num += 1
-
             emotion = ltoi[emotion]
 
             self.data.append((text_features, audio_features, video_features, emotion))

@@ -1,32 +1,34 @@
 import pandas as pd
 from torch.utils.data import Dataset
-import cv2
-
-
-MELD_LABELS = ["neu", "fear", "surp", "joy", "disg", "sad", "ang"]
+from cv2 import resize
 
 
 class MeldDataset(Dataset):
+    labels = ["neu", "fear", "surp", "joy", "disg", "sad", "ang"]
+
     def __init__(self, annotations_file):
         self.data = []
 
         data = pd.read_pickle(annotations_file)
 
-        ltoi = {}
-        emo_num = 0
+        ltoi = {
+            'neutral': 0,
+            'fear': 1,
+            'surprise': 2,
+            'joy': 3,
+            'disgust': 4,
+            'sadness': 5,
+            'anger': 6,
+        }
 
         for item in data:
             video_features = item[0]
             video_features = [
-                cv2.resize(img, dsize=(64, 64)) for img in video_features if img != []
+                resize(img, dsize=(64, 64)) for img in video_features if img != []
             ]
             audio_features = item[1]
             text_features = item[2]
             emotion = item[3]
-            if emotion not in ltoi:
-                ltoi[emotion] = emo_num
-                emo_num += 1
-
             emotion = ltoi[emotion]
 
             self.data.append((text_features, audio_features, video_features, emotion))
