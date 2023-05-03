@@ -1,17 +1,17 @@
-from torch.nn import Dropout, Linear
+from torch.nn import Dropout, Linear, Softmax
 
 from models.bert import BertModel, BertPreTrainedModel
 
 
 class BertForSequenceClassification(BertPreTrainedModel):
-    def __init__(self, config, num_labels, bert_finetun):
+    def __init__(self, config, bert_finetun):
         super(BertForSequenceClassification, self).__init__(config)
-        self.num_labels = num_labels
         self.bert = BertModel(config)
         self.BertFinetun = bert_finetun(config)
         self.dropout = Dropout(config.hidden_dropout_prob)
-        self.classifier = Linear(config.hidden_size, num_labels)
+        self.classifier = Linear(config.hidden_size, config.num_labels)
         self.apply(self.init_bert_weights)
+        self.labels = config.labels
 
     def forward(
         self,
@@ -40,7 +40,14 @@ class BertForSequenceClassification(BertPreTrainedModel):
         pooled_output = self.dropout(pooled_output)
         logits = self.classifier(pooled_output)
         if labels is not None:
-            loss = 0.5 * (logits.view(-1) - labels) ** 2
-            return loss
+            probs = Softmax(logits)
+            max_prob = max(probs[0])
+            index = probs.index(max_prob)
+            return labels[index]
+        elif self.labels is not None:
+            probs = Softmax(logits)
+            max_prob = max(probs[0])
+            index = probs.index(max_prob)
+            return self.labels[index]
         else:
             return logits, text_att, fusion_att

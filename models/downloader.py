@@ -1,4 +1,8 @@
 import torch
+import tarfile
+import tempfile
+import os
+from pytorch_pretrained_bert.file_utils import cached_path
 
 from models.bert import BertConfig
 from models.classifier import BertForSequenceClassification
@@ -7,21 +11,32 @@ from models.intermodal_fusion.finetune import BertFinetun as intermodalBERT
 
 
 class Downloader:
+    def __init__(self, model_download_path):
+        self.cache_dir = '/tmp/models/cache/'
+        resolved_archive_file = cached_path(model_download_path, cache_dir=self.cache_dir)
+        # Extract archive to temp dir
+        tempdir = tempfile.mkdtemp()
+        with tarfile.open(resolved_archive_file, 'r:gz') as archive:
+            archive.extractall(tempdir)
+        serialization_dir = tempdir
+
+        config_name = 'config.json'
+        weights_name = 'pytorch_model.pth'
+
+        self.config_file = os.path.join(serialization_dir, config_name)
+        self.weights_path = os.path.join(serialization_dir, weights_name)
+
     def get_model(
         self,
-        config_path,
-        source_path,
-        num_labels,
         device,
-        base_model_name="intermodal",
     ):
-        config = BertConfig.from_json_file(config_path)
-        bert_finetun = get_base_model(base_model_name)
+        config = BertConfig.from_json_file(self.config_file)
+        bert_finetun = get_base_model("intermodal")
         model = BertForSequenceClassification(
-            config=config, num_labels=num_labels, bert_finetun=bert_finetun
+            config=config, bert_finetun=bert_finetun
         )
 
-        model.load_state_dict(torch.load(source_path))
+        model.load_state_dict(torch.load( self.weights_path))
         model = model.to(device)
 
         return model
