@@ -1,15 +1,23 @@
 import json
 
-from torch import optim
 import matplotlib.pyplot as plt
 import seaborn as sns
-from tqdm import tqdm
-
 from evaluate import evaluate
+from torch import optim
+from tqdm import tqdm
 from train import train
 
 
-def pipeline(model, train_dataloader, valid_dataloader, labels, criterion, lr=2e-6, eps=1e-8, epochs=100):
+def pipeline(
+    model,
+    train_dataloader,
+    valid_dataloader,
+    labels,
+    criterion,
+    lr=2e-6,
+    eps=1e-8,
+    epochs=100,
+):
     optimizer = optim.AdamW(model.parameters(), lr=lr, eps=eps)
 
     best_valid_acc = 0.0
@@ -47,9 +55,8 @@ def pipeline(model, train_dataloader, valid_dataloader, labels, criterion, lr=2e
     print(f"Best valid prec = {best_valid_prec}")
     print(f"Best valid f1 = {best_valid_f1}")
     print(f"Best valid rec = {best_valid_rec}")
-    print(
-        f"Classification report = \n {json.dumps(result_report, sort_keys=True, indent=4)}"
-    )
+    json_report = json.dumps(result_report, sort_keys=True, indent=4)
+    print(f"Classification report = \n {json_report}")
 
     ax = plt.subplot()
     sns.heatmap(result_matrix, annot=True, fmt="g", ax=ax)

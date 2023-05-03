@@ -1,10 +1,8 @@
 import numpy as np
-from sklearn.metrics import accuracy_score, confusion_matrix
-from sklearn.metrics import precision_score
-from sklearn.metrics import f1_score
-from sklearn.metrics import recall_score
-from sklearn.metrics import classification_report
 import torch
+from sklearn.metrics import (accuracy_score, classification_report,
+                             confusion_matrix, f1_score, precision_score,
+                             recall_score)
 
 
 def multi_metrics(preds, y):

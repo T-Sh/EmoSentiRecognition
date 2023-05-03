@@ -2,19 +2,19 @@ from torch.utils.data import Dataset
 
 
 class RESDFromSourceDataset(Dataset):
-    labels = ['ang', 'disg', 'enthus', 'fear', 'happy', 'neut', 'sad']
+    labels = ["ang", "disg", "enthus", "fear", "happy", "neut", "sad"]
 
     def __init__(self, data):
         self.data = []
 
         ltoi = {
-            'anger': 0,
-            'disgust': 1,
-            'enthusiasm': 2,
-            'fear': 3,
-            'happiness': 4,
-            'neutral': 5,
-            'sadness': 6
+            "anger": 0,
+            "disgust": 1,
+            "enthusiasm": 2,
+            "fear": 3,
+            "happiness": 4,
+            "neutral": 5,
+            "sadness": 6,
         }
 
         for item in data.values.tolist():

@@ -1,7 +1,7 @@
-from torch.utils.data import DataLoader
-from torch.nn.utils.rnn import pad_sequence
-import torch
 import numpy as np
+import torch
+from torch.nn.utils.rnn import pad_sequence
+from torch.utils.data import DataLoader
 
 MAX_LENGTH = 25
 GROUP_SIZE = 10
@@ -56,7 +56,9 @@ def collate_batch_3_modals(batch):
         try:
             video = torch.transpose(pad_sequence(video_groups), 0, 1)
         except Exception:
-            print(len(video_groups), video_groups[0].shape, video_groups[1].shape)
+            print(
+                len(video_groups), video_groups[0].shape, video_groups[1].shape
+            )
             raise Exception
 
         pt = TOKENIZER(
@@ -79,23 +81,30 @@ def collate_batch_3_modals(batch):
     att_tensor = torch.stack(att_masks)
     label_tensor = torch.FloatTensor(label_list)
 
-    return video_features_tensor, audio_tensor, text_tensor, att_tensor, label_tensor
+    return (
+        video_features_tensor,
+        audio_tensor,
+        text_tensor,
+        att_tensor,
+        label_tensor,
+    )
 
 
 def collate_batch_2_modals(batch):
-    label_list, video_list = [], []
+    label_list = []
     text_list, att_masks = [], []
     audio_list = []
 
     for (_text_features, _audio_features, _label) in batch:
         label_list.append(_label)
 
-        pt = TOKENIZER(_text_features,
-                       padding="max_length",
-                       add_special_tokens=True,
-                       max_length=TEXT_MAX_LENGTH,
-                       return_tensors="pt",
-                       )
+        pt = TOKENIZER(
+            _text_features,
+            padding="max_length",
+            add_special_tokens=True,
+            max_length=TEXT_MAX_LENGTH,
+            return_tensors="pt",
+        )
 
         text_list.append(pt["input_ids"][0][:TEXT_MAX_LENGTH])
         att_masks.append(pt["attention_mask"][0][:TEXT_MAX_LENGTH])
@@ -111,10 +120,16 @@ def collate_batch_2_modals(batch):
 
 def make_eng_data_loaders(train_dataset, valid_dataset):
     train_dataloader = DataLoader(
-        train_dataset, batch_size=BATCH_SIZE, shuffle=True, collate_fn=collate_batch_3_modals
+        train_dataset,
+        batch_size=BATCH_SIZE,
+        shuffle=True,
+        collate_fn=collate_batch_3_modals,
     )
     valid_dataloader = DataLoader(
-        valid_dataset, batch_size=BATCH_SIZE, shuffle=True, collate_fn=collate_batch_3_modals
+        valid_dataset,
+        batch_size=BATCH_SIZE,
+        shuffle=True,
+        collate_fn=collate_batch_3_modals,
     )
 
     return train_dataloader, valid_dataloader
@@ -122,10 +137,16 @@ def make_eng_data_loaders(train_dataset, valid_dataset):
 
 def make_rus_data_loaders(train_dataset, valid_dataset):
     train_dataloader = DataLoader(
-        train_dataset, batch_size=BATCH_SIZE, shuffle=True, collate_fn=collate_batch_2_modals
+        train_dataset,
+        batch_size=BATCH_SIZE,
+        shuffle=True,
+        collate_fn=collate_batch_2_modals,
     )
     valid_dataloader = DataLoader(
-        valid_dataset, batch_size=BATCH_SIZE, shuffle=True, collate_fn=collate_batch_2_modals
+        valid_dataset,
+        batch_size=BATCH_SIZE,
+        shuffle=True,
+        collate_fn=collate_batch_2_modals,
     )
 
     return train_dataloader, valid_dataloader

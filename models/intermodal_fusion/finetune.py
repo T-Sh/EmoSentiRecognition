@@ -1,11 +1,10 @@
-from torch.nn import Module
-from torch.nn import ReLU, Softmax
-from torch.nn import Dropout
-from torch.nn import Linear
+import torch
+from torch.nn import Dropout, Linear, Module, ReLU, Softmax
+
 from models.bert import BertLayerNorm
 from models.intermodal_fusion.fusion import Fusion
-from models.intermodal_fusion.modalities_preps import TextPrep, AudioPrep, VideoPrep
-import torch
+from models.intermodal_fusion.modalities_preps import (AudioPrep, TextPrep,
+                                                       VideoPrep)
 
 
 class BertFinetun(Module):
@@ -23,7 +22,14 @@ class BertFinetun(Module):
         self.audio_prep = AudioPrep()
         self.video_prep = VideoPrep()
 
-    def forward(self, hidden_states, pooled_output, audio_data, video_data, attention_mask):
+    def forward(
+        self,
+        hidden_states,
+        pooled_output,
+        audio_data,
+        video_data,
+        attention_mask,
+    ):
         attention_mask = attention_mask.squeeze(1)
         attention_mask_ = attention_mask.permute(0, 2, 1)
 

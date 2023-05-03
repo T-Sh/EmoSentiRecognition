@@ -19,7 +19,9 @@ def evaluate(model, dataloader, device):
 
             predictions = model(text, audio, video, attention_mask=attr)[0]
             predictions = predictions.cpu().data
-            predictions = [predictions[i][0].item() for i in range(len(predictions))]
+            predictions = [
+                predictions[i][0].item() for i in range(len(predictions))
+            ]
             labels = labels.cpu().data
             labels = [labels[i].item() for i in range(len(labels))]
 
@@ -28,8 +30,25 @@ def evaluate(model, dataloader, device):
 
             torch.cuda.empty_cache()
 
-    acc, acc_7, prec, f1, rec, report, matrix = multi_metrics_for_valid_with_confusion(
+    (
+        acc,
+        acc_7,
+        prec,
+        f1,
+        rec,
+        report,
+        matrix,
+    ) = multi_metrics_for_valid_with_confusion(
         y_preds_tags_array, y_tags_array
     )
 
-    return epoch_loss / len(dataloader), acc, acc_7, prec, f1, rec, report, matrix
+    return (
+        epoch_loss / len(dataloader),
+        acc,
+        acc_7,
+        prec,
+        f1,
+        rec,
+        report,
+        matrix,
+    )

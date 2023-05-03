@@ -1,13 +1,16 @@
-from util.preprocess.preprocessor import Preprocessor
-from torch import device, cuda
+from torch import cuda, device
+
 from models.downloader import Downloader
+from util.preprocess.preprocessor import Preprocessor
 
 
 class Predictor:
     def __init__(self, config_path, source_path, num_labels, base_model_name):
         self.preprocessor = Preprocessor()
-        self.device = device('cuda' if cuda.is_available() else 'cpu')
-        self.model = Downloader.get_model(config_path, source_path, num_labels, device, base_model_name)
+        self.device = device("cuda" if cuda.is_available() else "cpu")
+        self.model = Downloader.get_model(
+            config_path, source_path, num_labels, device, base_model_name
+        )
 
     def predict(self, video_path, labels=None):
         vf, af, tf, mf = self.preprocessor.process(video_path)

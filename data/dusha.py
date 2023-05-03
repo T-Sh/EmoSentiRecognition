@@ -1,9 +1,9 @@
-from torch.utils.data import Dataset
 import pandas as pd
+from torch.utils.data import Dataset
 
 
 class DushaFromFileDataset(Dataset):
-    labels = ['angry', 'neutral', 'sad', 'other', 'positive']
+    labels = ["angry", "neutral", "sad", "other", "positive"]
 
     def __init__(self, annotations_file):
         self.data = []
@@ -11,11 +11,11 @@ class DushaFromFileDataset(Dataset):
         data = pd.read_pickle(annotations_file)
 
         ltoi = {
-            'angry': 0,
-            'neutral': 1,
-            'sad': 2,
-            'other': 3,
-            'positive': 4,
+            "angry": 0,
+            "neutral": 1,
+            "sad": 2,
+            "other": 3,
+            "positive": 4,
         }
 
         for item in data:

@@ -3,7 +3,7 @@ from transformers import BertTokenizer
 
 
 class TextProcessor:
-    def __init__(self, bert_name='bert-base-uncased', max_length=50):
+    def __init__(self, bert_name="bert-base-uncased", max_length=50):
         self.recognizer = sr.Recognizer()
         self.tokenizer = BertTokenizer.from_pretrained(bert_name)
         self.max_length = max_length
@@ -20,8 +20,10 @@ class TextProcessor:
         return result
 
     def get_features(self, text):
-        return self.tokenizer(text,
-                              padding="max_length",
-                              add_special_tokens=True,
-                              max_length=self.max_length,
-                              return_tensors="pt")
+        return self.tokenizer(
+            text,
+            padding="max_length",
+            add_special_tokens=True,
+            max_length=self.max_length,
+            return_tensors="pt",
+        )

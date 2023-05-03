@@ -1,6 +1,6 @@
 import pandas as pd
-from torch.utils.data import Dataset
 from cv2 import resize
+from torch.utils.data import Dataset
 
 
 class MoseiDataset(Dataset):
@@ -12,23 +12,27 @@ class MoseiDataset(Dataset):
         data = pd.read_pickle(annotations_file)
 
         ltoi = {
-            'sadness': 0,
-            'happiness': 1,
-            'anger': 2,
-            'disgust': 3,
+            "sadness": 0,
+            "happiness": 1,
+            "anger": 2,
+            "disgust": 3,
         }
 
         for item in data:
             video_features = item[0]
             video_features = [
-                resize(img, dsize=(64, 64)) for img in video_features if img != []
+                resize(img, dsize=(64, 64))
+                for img in video_features
+                if img != []
             ]
             audio_features = item[1]
             text_features = item[2]
             emotion = item[3]
             emotion = ltoi[emotion]
 
-            self.data.append((text_features, audio_features, video_features, emotion))
+            self.data.append(
+                (text_features, audio_features, video_features, emotion)
+            )
 
         del data
 

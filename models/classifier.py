@@ -1,7 +1,6 @@
-from models.bert import BertPreTrainedModel
-from models.bert import BertModel
-from torch.nn import Dropout
-from torch.nn import Linear
+from torch.nn import Dropout, Linear
+
+from models.bert import BertModel, BertPreTrainedModel
 
 
 class BertForSequenceClassification(BertPreTrainedModel):
@@ -32,7 +31,11 @@ class BertForSequenceClassification(BertPreTrainedModel):
         )
         pooled_output = self.dropout(pooled_output)
         pooled_output, text_att, fusion_att = self.BertFinetun(
-            encoder_lastoutput, pooled_output, all_audio_data, video_data, extend_mask
+            encoder_lastoutput,
+            pooled_output,
+            all_audio_data,
+            video_data,
+            extend_mask,
         )
         pooled_output = self.dropout(pooled_output)
         logits = self.classifier(pooled_output)

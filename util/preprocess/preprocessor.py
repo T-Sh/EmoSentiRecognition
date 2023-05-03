@@ -1,6 +1,6 @@
-from util.preprocess.video import VideoProcessor
 from util.preprocess.audio import AudioProcessor
 from util.preprocess.text import TextProcessor
+from util.preprocess.video import VideoProcessor
 
 
 class Preprocessor:
@@ -20,5 +20,5 @@ class Preprocessor:
             video_features,
             audio_features,
             text_features["input_ids"][0],
-            text_features["attention_mask"][0]
+            text_features["attention_mask"][0],
         )

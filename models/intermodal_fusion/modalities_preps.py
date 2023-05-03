@@ -1,11 +1,6 @@
-from torch.nn import Conv1d, Conv3d
-from torch.nn import Module
-from torch.nn import ReLU
-from torch.nn import BatchNorm3d
-from torch.nn import Dropout3d
-from torch.nn import LSTM
 import numpy as np
 import torch
+from torch.nn import LSTM, BatchNorm3d, Conv1d, Conv3d, Dropout3d, Module, ReLU
 
 
 class TextPrep(Module):
@@ -54,13 +49,19 @@ class VideoPrep(Module):
         k1 = (4, 4, 4)  # 3d kernel size
         s1 = (2, 2, 1)  # 3d strides
         pd1 = (1, 1, 2)  # 3d padding
-        self.proj_v_1 = Conv3d(in_channels=5, out_channels=ch1,
-                               kernel_size=k1, stride=s1,
-                               padding=pd1, bias=False)
+        self.proj_v_1 = Conv3d(
+            in_channels=5,
+            out_channels=ch1,
+            kernel_size=k1,
+            stride=s1,
+            padding=pd1,
+            bias=False,
+        )
         self.bn1 = BatchNorm3d(ch1)
         self.drop_video = Dropout3d(0.1)
-        self.lstm = LSTM(input_size=6656, hidden_size=30,
-                         num_layers=2, batch_first=True)
+        self.lstm = LSTM(
+            input_size=6656, hidden_size=30, num_layers=2, batch_first=True
+        )
         self.activation = ReLU()
 
     def forward(self, data):

@@ -1,5 +1,5 @@
-import torch
 import numpy as np
+import torch
 from torch import nn
 
 from models.bert import BertLayerNorm
@@ -39,7 +39,9 @@ class BertFinetun(nn.Module):
         self.video_weight_1 = torch.nn.Parameter(
             torch.FloatTensor(1), requires_grad=True
         )
-        self.bias = torch.nn.Parameter(torch.FloatTensor(1), requires_grad=True)
+        self.bias = torch.nn.Parameter(
+            torch.FloatTensor(1), requires_grad=True
+        )
         self.audio_weight_1.data.fill_(1)
         self.text_weight_1.data.fill_(1)
         self.video_weight_1.data.fill_(1)
@@ -50,7 +52,12 @@ class BertFinetun(nn.Module):
         self.LayerNorm1 = BertLayerNorm(768)
 
     def forward(
-        self, hidden_states, pooled_output, audio_data, video_data, attention_mask
+        self,
+        hidden_states,
+        pooled_output,
+        audio_data,
+        video_data,
+        attention_mask,
     ):
         attention_mask = attention_mask.squeeze(1)
         attention_mask_ = attention_mask.permute(0, 2, 1)

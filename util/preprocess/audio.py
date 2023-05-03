@@ -1,6 +1,6 @@
-import opensmile
 import librosa
 import moviepy.editor as mp
+import opensmile
 
 
 class AudioProcessor:

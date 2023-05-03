@@ -1,6 +1,5 @@
-from torch.nn import Parameter
-from torch.nn import Module
 from torch import FloatTensor
+from torch.nn import Module, Parameter
 
 
 class Fusion(Module):
