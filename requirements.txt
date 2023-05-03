@@ -9,5 +9,11 @@ tqdm==4.65.0
 sklearn==2.2.0
 numpy==1.22.4
 
+speech_recognition
+moviepy
 torch
 cv2
+librosa
+opensmile
+dlib
+imutils
