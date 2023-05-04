@@ -9,8 +9,11 @@ from models.intermodal_fusion.finetune import BertFinetun as intermodalBERT
 
 
 class Downloader:
-    def __init__(self, model_download_path):
-        self.cache_dir = '/tmp/models/cache/'
+    def __init__(self, model_download_path=None):
+        if model_download_path is None:
+            return
+
+        self.cache_dir = '/tmp/models/'
 
         hf_hub_download(repo_id=model_download_path, local_dir=self.cache_dir)
 
