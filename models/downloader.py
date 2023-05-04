@@ -1,8 +1,6 @@
 import torch
-import tarfile
-import tempfile
 import os
-from pytorch_pretrained_bert.file_utils import cached_path
+from huggingface_hub import hf_hub_download
 
 from models.bert import BertConfig
 from models.classifier import BertForSequenceClassification
@@ -13,18 +11,14 @@ from models.intermodal_fusion.finetune import BertFinetun as intermodalBERT
 class Downloader:
     def __init__(self, model_download_path):
         self.cache_dir = '/tmp/models/cache/'
-        resolved_archive_file = cached_path(model_download_path, cache_dir=self.cache_dir)
-        # Extract archive to temp dir
-        tempdir = tempfile.mkdtemp()
-        with tarfile.open(resolved_archive_file, 'r:gz') as archive:
-            archive.extractall(tempdir)
-        serialization_dir = tempdir
+
+        hf_hub_download(repo_id=model_download_path, local_dir=self.cache_dir)
 
         config_name = 'config.json'
         weights_name = 'pytorch_model.pth'
 
-        self.config_file = os.path.join(serialization_dir, config_name)
-        self.weights_path = os.path.join(serialization_dir, weights_name)
+        self.config_file = os.path.join(self.cache_dir, config_name)
+        self.weights_path = os.path.join(self.cache_dir, weights_name)
 
     def get_model(
         self,

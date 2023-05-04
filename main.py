@@ -10,7 +10,8 @@ app = Flask(__name__)
 # Cross Origin Resource Sharing (CORS) handling
 CORS(app, resources={'/video': {"origins": "http://localhost:8080"}})
 
-predictor = Predictor('')
+model_name = 'Tatyana/dusha_intermodal_4_emotions'
+predictor = Predictor(model_name)
 
 
 @app.route('/video', methods=['POST'])
