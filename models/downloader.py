@@ -1,6 +1,6 @@
 import torch
 import os
-from huggingface_hub import hf_hub_download
+from huggingface_hub import snapshot_download
 
 from models.bert import BertConfig
 from models.classifier import BertForSequenceClassification
@@ -15,7 +15,10 @@ class Downloader:
 
         self.cache_dir = '/tmp/models/'
 
-        hf_hub_download(repo_id=model_download_path, local_dir=self.cache_dir)
+        snapshot_download(repo_id=model_download_path,
+                          local_dir=self.cache_dir,
+                          resume_download=True,
+                          etag_timeout=300)
 
         config_name = 'config.json'
         weights_name = 'pytorch_model.pth'
@@ -27,14 +30,9 @@ class Downloader:
         self,
         device,
     ):
+        model = torch.load(self.weights_path, map_location=device)
         config = BertConfig.from_json_file(self.config_file)
-        bert_finetun = get_base_model("intermodal")
-        model = BertForSequenceClassification(
-            config=config, bert_finetun=bert_finetun
-        )
-
-        model.load_state_dict(torch.load( self.weights_path))
-        model = model.to(device)
+        model.labels = config.labels
 
         return model
 

@@ -2,15 +2,27 @@ from flask_cors import CORS
 from flask import Flask, flash, request, redirect, url_for, render_template
 from werkzeug.utils import secure_filename
 import os
+
+from models.intermodal_fusion.finetune import (BertFinetun, Fusion,
+                                               TextPrep, AudioPrep, VideoPrep)
 from util.predict.predictor import Predictor
+
+from models.classifier import BertForSequenceClassification
+from models.bert import (BertModel, BertPreTrainedModel,
+                         BertEmbeddings, BertLayerNorm, BertEncoder,
+                         BertLayer, BertAttention, BertSelfAttention,
+                         BertSelfOutput, BertIntermediate, BertOutput,
+                         BertPooler, BertConfig, gelu)
 
 
 app = Flask(__name__)
 
 # Cross Origin Resource Sharing (CORS) handling
-CORS(app, resources={'/video': {"origins": "http://localhost:8080"}})
+CORS(app, resources={'/video': {"origins": "http://localhost:5000"}})
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
-model_name = 'Tatyana/dusha_intermodal_4_emotions'
+model_name = 'Tatyana/iemocap_intermodal_6_emotions'
+# model_name = 'Tatyana/dusha_intermodal_4_emotions'
 predictor = Predictor(model_name)
 
 
@@ -25,8 +37,9 @@ def upload_video():
         return redirect(request.url)
     else:
         filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        file.save(os.path.join("/tmp/", filename))
         flash('Video successfully uploaded')
+        filename = "/tmp/" + filename
         label = predictor.predict(filename)
         return label
 

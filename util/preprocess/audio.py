@@ -1,10 +1,12 @@
 import librosa
 import moviepy.editor as mp
 import opensmile
+import numpy as np
+import torch
 
 
 class AudioProcessor:
-    sample_path = "tmp/converted_sample.wav"
+    sample_path = "/tmp/converted_sample.wav"
 
     def __init__(self):
         self.smile = opensmile.Smile(
@@ -21,6 +23,10 @@ class AudioProcessor:
     def get_features(self, audio_path):
         y, sr = librosa.load(audio_path)
         mfcc_40 = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=40)
-        gemap = self.smile.process_file(audio_path).values.tolist()
+        mfcc_40 = [np.mean(elem) for elem in mfcc_40]
+        gemap = self.smile.process_file(audio_path).values.tolist()[0]
 
-        return mfcc_40 + gemap
+        audio_tensor = torch.FloatTensor([mfcc_40 + gemap])
+        audio_tensor = torch.unsqueeze(audio_tensor, 1)
+
+        return audio_tensor

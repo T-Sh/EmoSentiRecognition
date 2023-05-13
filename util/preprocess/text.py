@@ -9,13 +9,15 @@ class TextProcessor:
         self.max_length = max_length
 
     def extract(self, audio_path) -> str:
-        audio = sr.AudioFile(audio_path)
-
-        with audio as source:
-            self.recognizer.adjust_for_ambient_noise(source)
-            audio_file = self.recognizer.record(source)
-
-        result = self.recognizer.recognize_google(audio_file)
+        with sr.WavFile(audio_path) as source:
+            # listen for the data (load audio to memory)
+            audio_data = self.recognizer.record(source)
+            self.recognizer.adjust_for_ambient_noise(source, duration=5)
+            # recognize (convert from speech to text)
+            try:
+                result = self.recognizer.recognize(audio_data)
+            except LookupError:
+                result = "empty string"
 
         return result
 

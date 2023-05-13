@@ -30,7 +30,7 @@ class BertForSequenceClassification(BertPreTrainedModel):
             output_all_encoded_layers=True,
         )
         pooled_output = self.dropout(pooled_output)
-        pooled_output, text_att, fusion_att = self.BertFinetun(
+        pooled_output, fusion_att = self.BertFinetun(
             encoder_lastoutput,
             pooled_output,
             all_audio_data,
@@ -45,9 +45,8 @@ class BertForSequenceClassification(BertPreTrainedModel):
             index = probs.index(max_prob)
             return labels[index]
         elif self.labels is not None:
-            probs = Softmax(logits)
-            max_prob = max(probs[0])
-            index = probs.index(max_prob)
+            probs = Softmax(logits).dim
+            index = probs.argmax(1)[0].item()
             return self.labels[index]
         else:
-            return logits, text_att, fusion_att
+            return logits, fusion_att

@@ -19,6 +19,7 @@ class Preprocessor:
         return (
             video_features,
             audio_features,
-            text_features["input_ids"][0],
-            text_features["attention_mask"][0],
+            text_features["input_ids"],
+            text_features["attention_mask"],
+            text_features["token_type_ids"],
         )
