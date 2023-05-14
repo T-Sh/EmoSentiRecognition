@@ -6,10 +6,10 @@ pytorch_pretrained_bert==0.6.2
 utils==1.0.1
 urllib3==1.26.15
 transformers==4.28.1
-pandas==1.5.3
+# pandas==1.5.3
 seaborn==0.12.2
-matplotlib==3.7.1
-tqdm==4.65.0
+# matplotlib==3.7.1
+# tqdm==4.65.0
 numpy==1.22.4
 torch==1.13.0
 SpeechRecognition==2.1.3
