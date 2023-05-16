@@ -11,10 +11,11 @@ from models.intermodal_fusion.finetune import BertFinetun as intermodalBERT
 class Downloader:
 
     available_models = {
-        "iemocap": "Tatyana/iemocap_intermodal_6_emotions",
-        "meld": "",
-        "mosi": "",
-        "mosei": "",
+        "iemocap": "MonoHime/iemocap-emo-intermodal",
+        "meld": "MonoHime/meld-emo-intermodal",
+        "mosi": "MonoHime/mosi-senti-intermodal",
+        "mosei_emo": "MonoHime/mosei-emo-intermodal",
+        "mosei_senti": "MonoHime/mosei-senti-intermodal",
     }
 
     def __init__(self, model_download_path=None):
