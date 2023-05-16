@@ -41,6 +41,7 @@ Response contains one string value - emotion or sentiment label.
 Available trained models (this names can be specified in MODEL_NAME param):
 
 * iemocap (6 emotions)
-* mosei (6 emotions)
+* mosei-emo (6 emotions)
+* mosei-senti (7 classes of sentiment)
 * mosi (7 classes of sentiment)
 * meld (7 emotions)
