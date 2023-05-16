@@ -17,6 +17,7 @@ from models.bert import (BertModel, BertPreTrainedModel,
 
 app = Flask(__name__)
 
+# This is needed for torch.load_dict
 __main__.BertForSequenceClassification = BertForSequenceClassification
 __main__.BertModel = BertModel
 __main__.BertPreTrainedModel = BertPreTrainedModel
@@ -43,7 +44,7 @@ __main__.VideoPrep = VideoPrep
 CORS(app, resources={'/video': {"origins": "http://localhost:5000"}})
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
-model_name = 'Tatyana/iemocap_intermodal_6_emotions'
+model_name = os.getenv('MODEL_NAME')
 predictor = Predictor(model_name)
 
 

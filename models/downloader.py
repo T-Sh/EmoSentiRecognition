@@ -9,6 +9,14 @@ from models.intermodal_fusion.finetune import BertFinetun as intermodalBERT
 
 
 class Downloader:
+
+    available_models = {
+        "iemocap": "Tatyana/iemocap_intermodal_6_emotions",
+        "meld": "",
+        "mosi": "",
+        "mosei": "",
+    }
+
     def __init__(self, model_download_path=None):
         if model_download_path is None:
             return
@@ -26,6 +34,12 @@ class Downloader:
         self.config_file = os.path.join(self.cache_dir, config_name)
         self.weights_path = os.path.join(self.cache_dir, weights_name)
 
+    def __get_model_path(self, model_name: str):
+        model_path = self.available_models.get(model_name, "")
+
+        if model_path == "":
+            raise LookupError(f"no path found for chosen model {model_name}")
+
     def get_model(
         self,
         device,
@@ -37,10 +51,10 @@ class Downloader:
         return model
 
 
-def get_base_model(name):
+def get_base_model(name: str):
     if name == "intermodal":
         return intermodalBERT
     elif name == "cross":
         return crossBERT
     else:
-        raise NameError("no such model")
+        raise NameError(f"no such model {name}")
