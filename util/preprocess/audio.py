@@ -1,7 +1,7 @@
 import librosa
 import moviepy.editor as mp
-import opensmile
 import numpy as np
+import opensmile
 import torch
 
 

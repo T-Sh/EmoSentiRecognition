@@ -5,18 +5,18 @@ import seaborn as sns
 from evaluate import evaluate
 from torch import optim
 from tqdm import tqdm
+from train import train
 
 from models.downloader import Downloader
-from train import train
 
 
 class Trainer:
     def __init__(
-            self,
-            device,
-            lr=2e-6,
-            eps=1e-8,
-            epochs=100,
+        self,
+        device,
+        lr=2e-6,
+        eps=1e-8,
+        epochs=100,
     ):
         downloader = Downloader()
         self.model = downloader.get_model(device)
@@ -24,11 +24,11 @@ class Trainer:
         self.epochs = epochs
 
     def pipeline(
-            self,
-            train_dataloader,
-            valid_dataloader,
-            labels,
-            criterion,
+        self,
+        train_dataloader,
+        valid_dataloader,
+        labels,
+        criterion,
     ):
         best_valid_acc = 0.0
         best_valid_prec = 0.0

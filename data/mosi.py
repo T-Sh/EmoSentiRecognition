@@ -16,15 +16,11 @@ class MosiDataset(Dataset):
             audio_features = item[1]
             video_features = item[2]
             video_features = [
-                resize(img, dsize=(64, 64))
-                for img in video_features
-                if img != []
+                resize(img, dsize=(64, 64)) for img in video_features if img != []
             ]
             sentiment = item[3]
 
-            self.data.append(
-                (text_features, audio_features, video_features, sentiment)
-            )
+            self.data.append((text_features, audio_features, video_features, sentiment))
 
     def __len__(self):
         return len(self.data)

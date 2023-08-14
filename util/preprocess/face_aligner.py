@@ -109,7 +109,7 @@ class FaceAligner:
         # the ratio of the distance between eyes in the *current*
         # image to the ratio of distance between eyes in the
         # *desired* image
-        dist = np.sqrt((dX ** 2) + (dY ** 2))
+        dist = np.sqrt((dX**2) + (dY**2))
         desiredDist = desiredRightEyeX - self.desiredLeftEye[0]
         desiredDist *= self.desiredFaceWidth
         scale = desiredDist / dist

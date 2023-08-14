@@ -1,19 +1,19 @@
-from flask_cors import CORS
-from flask import Flask, flash, request, redirect
-from werkzeug.utils import secure_filename
 import os
+
 import __main__
+from flask import Flask, flash, redirect, request
+from flask_cors import CORS
+from werkzeug.utils import secure_filename
 
-from models.intermodal_fusion.finetune import (BertFinetun, Fusion,
-                                               TextPrep, AudioPrep, VideoPrep)
-from util.predict.predictor import Predictor
-
+from models.bert import (BertAttention, BertConfig, BertEmbeddings,
+                         BertEncoder, BertIntermediate, BertLayer,
+                         BertLayerNorm, BertModel, BertOutput, BertPooler,
+                         BertPreTrainedModel, BertSelfAttention,
+                         BertSelfOutput, gelu)
 from models.classifier import BertForSequenceClassification
-from models.bert import (BertModel, BertPreTrainedModel,
-                         BertEmbeddings, BertLayerNorm, BertEncoder,
-                         BertLayer, BertAttention, BertSelfAttention,
-                         BertSelfOutput, BertIntermediate, BertOutput,
-                         BertPooler, BertConfig, gelu)
+from models.intermodal_fusion.finetune import (AudioPrep, BertFinetun, Fusion,
+                                               TextPrep, VideoPrep)
+from util.predict.predictor import Predictor
 
 app = Flask(__name__)
 
@@ -41,30 +41,30 @@ __main__.AudioPrep = AudioPrep
 __main__.VideoPrep = VideoPrep
 
 # Cross Origin Resource Sharing (CORS) handling
-CORS(app, resources={'/video': {"origins": "http://localhost:5000"}})
+CORS(app, resources={"/video": {"origins": "http://localhost:5000"}})
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
-model_name = os.getenv('MODEL_NAME')
+model_name = os.getenv("MODEL_NAME")
 predictor = Predictor(model_name)
 
 
-@app.route('/video', methods=['POST'])
+@app.route("/video", methods=["POST"])
 def upload_video():
-    if 'file' not in request.files:
-        flash('No file part')
+    if "file" not in request.files:
+        flash("No file part")
         return redirect(request.url)
-    file = request.files['file']
-    if file.filename == '':
-        flash('No image selected for uploading')
+    file = request.files["file"]
+    if file.filename == "":
+        flash("No image selected for uploading")
         return redirect(request.url)
     else:
         filename = secure_filename(file.filename)
         file.save(os.path.join("/tmp/", filename))
-        flash('Video successfully uploaded')
+        flash("Video successfully uploaded")
         filename = "/tmp/" + filename
         label = predictor.predict(filename)
         return label
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host="0.0.0.0", port=5000)

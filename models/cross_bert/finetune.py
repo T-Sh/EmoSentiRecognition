@@ -39,9 +39,7 @@ class BertFinetun(nn.Module):
         self.video_weight_1 = torch.nn.Parameter(
             torch.FloatTensor(1), requires_grad=True
         )
-        self.bias = torch.nn.Parameter(
-            torch.FloatTensor(1), requires_grad=True
-        )
+        self.bias = torch.nn.Parameter(torch.FloatTensor(1), requires_grad=True)
         self.audio_weight_1.data.fill_(1)
         self.text_weight_1.data.fill_(1)
         self.video_weight_1.data.fill_(1)

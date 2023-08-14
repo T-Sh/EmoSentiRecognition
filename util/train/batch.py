@@ -22,7 +22,7 @@ def collate_batch_3_modals(batch):
     text_list, att_masks = [], []
     audio_list = []
 
-    for (_text_features, _audio_features, _video_features, _label) in batch:
+    for _text_features, _audio_features, _video_features, _label in batch:
         label_list.append(_label)
 
         video_groups = []
@@ -56,9 +56,7 @@ def collate_batch_3_modals(batch):
         try:
             video = torch.transpose(pad_sequence(video_groups), 0, 1)
         except Exception:
-            print(
-                len(video_groups), video_groups[0].shape, video_groups[1].shape
-            )
+            print(len(video_groups), video_groups[0].shape, video_groups[1].shape)
             raise Exception
 
         pt = TOKENIZER(
@@ -95,7 +93,7 @@ def collate_batch_2_modals(batch):
     text_list, att_masks = [], []
     audio_list = []
 
-    for (_text_features, _audio_features, _label) in batch:
+    for _text_features, _audio_features, _label in batch:
         label_list.append(_label)
 
         pt = TOKENIZER(

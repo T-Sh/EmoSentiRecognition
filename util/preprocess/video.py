@@ -1,12 +1,11 @@
 import dlib
 import imutils
+import numpy as np
 import torch
 from cv2 import COLOR_BGR2GRAY, VideoCapture, cvtColor
 from torch.nn.utils.rnn import pad_sequence
 
 from util.preprocess.face_aligner import FaceAligner
-
-import numpy as np
 
 
 def rgb2gray(rgb):
@@ -15,13 +14,9 @@ def rgb2gray(rgb):
 
 class VideoProcessor:
     def __init__(self, desired_face_width=64):
-        predictor = dlib.shape_predictor(
-            "/app/shape_predictor_68_face_landmarks.dat"
-        )
+        predictor = dlib.shape_predictor("/app/shape_predictor_68_face_landmarks.dat")
         self.detector = dlib.get_frontal_face_detector()
-        self.aligner = FaceAligner(
-            predictor, desiredFaceWidth=desired_face_width
-        )
+        self.aligner = FaceAligner(predictor, desiredFaceWidth=desired_face_width)
 
     def __get_aligned_face(self, frame):
         frame = imutils.resize(frame, width=256)
