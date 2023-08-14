@@ -3,6 +3,7 @@ import torch
 from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import DataLoader
 
+# TODO: move to env
 MAX_LENGTH = 25
 GROUP_SIZE = 10
 OVERLAP = 5

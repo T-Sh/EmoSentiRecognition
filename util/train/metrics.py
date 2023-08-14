@@ -31,7 +31,7 @@ def multi_metrics_for_valid(y_pred_tags, y_tags):
     return acc, prec, f1, rec, report
 
 
-def accuracy_7(out, labels):
+def accuracy_custom(out, labels):
     return np.sum(np.round(out) == np.round(labels)) / float(len(labels))
 
 
@@ -45,6 +45,6 @@ def multi_metrics_for_valid_with_confusion(y_pred_tags, y_tags):
     report = classification_report(y_tags, y_pred_tags, output_dict=True)
     matrix = confusion_matrix(y_tags, y_pred_tags)
 
-    acc7 = accuracy_7(y_pred_tags, y_tags)
+    acc_custom = accuracy_custom(y_pred_tags, y_tags)
 
-    return acc, acc7, prec, f1, rec, report, matrix
+    return acc, acc_custom, prec, f1, rec, report, matrix

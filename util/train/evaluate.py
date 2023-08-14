@@ -30,7 +30,7 @@ def evaluate(model, dataloader, device):
 
     (
         acc,
-        acc_7,
+        acc_custom,
         prec,
         f1,
         rec,
@@ -41,7 +41,7 @@ def evaluate(model, dataloader, device):
     return (
         epoch_loss / len(dataloader),
         acc,
-        acc_7,
+        acc_custom,
         prec,
         f1,
         rec,

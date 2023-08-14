@@ -23,7 +23,7 @@ class Trainer:
         self.optimizer = optim.AdamW(self.model.parameters(), lr=lr, eps=eps)
         self.epochs = epochs
 
-    def pipeline(
+    def main_pipeline(
         self,
         train_dataloader,
         valid_dataloader,
@@ -34,6 +34,7 @@ class Trainer:
         best_valid_prec = 0.0
         best_valid_f1 = 0.0
         best_valid_rec = 0.0
+        best_epoch = 0
         result_report = {}
         result_matrix = {}
 
@@ -44,7 +45,7 @@ class Trainer:
             (
                 valid_loss,
                 valid_acc,
-                valid_acc_7,
+                valid_acc_custom,
                 valid_prec,
                 valid_f1,
                 valid_rec,
@@ -55,12 +56,14 @@ class Trainer:
             if valid_acc >= best_valid_acc:
                 result_report = report
                 result_matrix = matrix
+                best_epoch = epoch
 
             best_valid_acc = max(best_valid_acc, valid_acc)
             best_valid_prec = max(best_valid_prec, valid_prec)
             best_valid_rec = max(best_valid_rec, valid_rec)
             best_valid_f1 = max(best_valid_f1, valid_f1)
 
+        print(f"Best valid epoch = {best_epoch}")
         print(f"Best valid acc = {best_valid_acc}")
         print(f"Best valid prec = {best_valid_prec}")
         print(f"Best valid f1 = {best_valid_f1}")
